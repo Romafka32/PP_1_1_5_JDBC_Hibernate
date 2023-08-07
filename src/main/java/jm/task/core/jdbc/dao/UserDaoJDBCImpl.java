@@ -34,18 +34,13 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void createUsersTable() throws SQLException {
-        PreparedStatement preparedStatement = null;
-        try {
-            preparedStatement = util.getConnection().prepareStatement(CREATE);
+        try (PreparedStatement preparedStatement = util.getConnection().prepareStatement(CREATE)) {
             preparedStatement.executeUpdate();
 
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
             if (util.getConnection() != null) {
                 util.getConnection().close();
             }
@@ -53,16 +48,11 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void dropUsersTable() throws SQLException {
-        PreparedStatement preparedStatement = null;
-        try {
-            preparedStatement = util.getConnection().prepareStatement(DROP);
+        try (PreparedStatement preparedStatement = util.getConnection().prepareStatement(DROP)) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
             if (util.getConnection() != null) {
                 util.getConnection().close();
             }
@@ -70,9 +60,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) throws SQLException {
-        PreparedStatement preparedStatement = null;
-        try {
-            preparedStatement = util.getConnection().prepareStatement(SAVE);
+        try (PreparedStatement preparedStatement = util.getConnection().prepareStatement(SAVE)) {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
             preparedStatement.setByte(3, age);
@@ -83,9 +71,6 @@ public class UserDaoJDBCImpl implements UserDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
             if (util.getConnection() != null) {
                 util.getConnection().close();
             }
@@ -93,18 +78,13 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void removeUserById(long id) throws SQLException {
-        PreparedStatement preparedStatement = null;
-        try {
-            preparedStatement = util.getConnection().prepareStatement(DELETE);
+        try (PreparedStatement preparedStatement = util.getConnection().prepareStatement(DELETE)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
             if (util.getConnection() != null) {
                 util.getConnection().close();
             }
@@ -113,24 +93,19 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public List<User> getAllUsers() throws SQLException {
         List<User> allUsers = new ArrayList<>();
-        PreparedStatement preparedStatement = null;
-        try {
-            preparedStatement = util.getConnection().prepareStatement(GET_ALL);
+        try (PreparedStatement preparedStatement = util.getConnection().prepareStatement(GET_ALL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
                 allUsers.add(new User(resultSet.getString("name"),
-                                        resultSet.getString("lastName"),
-                                        resultSet.getByte("age")));
+                        resultSet.getString("lastName"),
+                        resultSet.getByte("age")));
             }
-            allUsers.stream().forEach(System.out::println);
+            allUsers.forEach(System.out::println);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
             if (util.getConnection() != null) {
                 util.getConnection().close();
             }
@@ -139,18 +114,13 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void cleanUsersTable() throws SQLException {
-        PreparedStatement preparedStatement = null;
-        try {
-            preparedStatement = util.getConnection().prepareStatement(CLEAR);
+        try (PreparedStatement preparedStatement = util.getConnection().prepareStatement(CLEAR)) {
             preparedStatement.executeUpdate();
 
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
             if (util.getConnection() != null) {
                 util.getConnection().close();
             }
