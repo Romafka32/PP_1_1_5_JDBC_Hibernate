@@ -3,6 +3,7 @@ package jm.task.core.jdbc.dao;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,40 +28,34 @@ public class UserDaoJDBCImpl implements UserDao {
 
     private static final String CLEAR = "TRUNCATE table users";
 
-    private static final Util util = new Util();
+    private static final Connection connection = new Util().getConnection();
 
     public UserDaoJDBCImpl() {
 
     }
 
-    public void createUsersTable() throws SQLException {
-        try (PreparedStatement preparedStatement = util.getConnection().prepareStatement(CREATE)) {
+    public void createUsersTable() {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(CREATE)) {
             preparedStatement.executeUpdate();
-
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            if (util.getConnection() != null) {
-                util.getConnection().close();
-            }
         }
     }
 
-    public void dropUsersTable() throws SQLException {
-        try (PreparedStatement preparedStatement = util.getConnection().prepareStatement(DROP)) {
+    public void dropUsersTable() {
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(DROP)) {
             preparedStatement.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            if (util.getConnection() != null) {
-                util.getConnection().close();
-            }
         }
     }
 
-    public void saveUser(String name, String lastName, byte age) throws SQLException {
-        try (PreparedStatement preparedStatement = util.getConnection().prepareStatement(SAVE)) {
+    public void saveUser(String name, String lastName, byte age) {
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SAVE)) {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
             preparedStatement.setByte(3, age);
@@ -70,30 +65,25 @@ public class UserDaoJDBCImpl implements UserDao {
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            if (util.getConnection() != null) {
-                util.getConnection().close();
-            }
         }
     }
 
-    public void removeUserById(long id) throws SQLException {
-        try (PreparedStatement preparedStatement = util.getConnection().prepareStatement(DELETE)) {
+    public void removeUserById(long id) {
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            if (util.getConnection() != null) {
-                util.getConnection().close();
-            }
         }
     }
 
-    public List<User> getAllUsers() throws SQLException {
+    public List<User> getAllUsers() {
+
         List<User> allUsers = new ArrayList<>();
-        try (PreparedStatement preparedStatement = util.getConnection().prepareStatement(GET_ALL)) {
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
@@ -105,25 +95,18 @@ public class UserDaoJDBCImpl implements UserDao {
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            if (util.getConnection() != null) {
-                util.getConnection().close();
-            }
         }
+
         return allUsers;
     }
 
-    public void cleanUsersTable() throws SQLException {
-        try (PreparedStatement preparedStatement = util.getConnection().prepareStatement(CLEAR)) {
-            preparedStatement.executeUpdate();
+    public void cleanUsersTable() {
 
+        try (PreparedStatement preparedStatement = connection.prepareStatement(CLEAR)) {
+            preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
-            if (util.getConnection() != null) {
-                util.getConnection().close();
-            }
         }
     }
 }
