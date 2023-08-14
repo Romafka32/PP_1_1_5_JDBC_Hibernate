@@ -8,7 +8,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.NativeQuery;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
@@ -45,7 +44,7 @@ public class UserDaoHibernateImpl implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            System.out.println("ERROR!");
+            e.printStackTrace();
         }
     }
 
@@ -60,7 +59,7 @@ public class UserDaoHibernateImpl implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            System.out.println("ERROR!");
+            e.printStackTrace();
         }
     }
 
@@ -80,7 +79,7 @@ public class UserDaoHibernateImpl implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            System.out.println("ERROR!");
+            e.printStackTrace();
         }
     }
 
@@ -96,7 +95,7 @@ public class UserDaoHibernateImpl implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            System.out.println("ERROR!");
+            e.printStackTrace();
         }
     }
 
@@ -113,7 +112,7 @@ public class UserDaoHibernateImpl implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            System.out.println("ERROR!");
+            e.printStackTrace();
         }
         return list;
     }
@@ -129,7 +128,7 @@ public class UserDaoHibernateImpl implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            System.out.println("ERROR!");
+            e.printStackTrace();
         }
     }
 }
