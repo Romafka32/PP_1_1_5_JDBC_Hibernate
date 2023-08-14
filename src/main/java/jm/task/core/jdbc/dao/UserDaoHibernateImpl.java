@@ -1,9 +1,34 @@
 package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
+import jm.task.core.jdbc.util.Util;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.NativeQuery;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
+    private static final String CREATE = "CREATE TABLE IF NOT EXISTS mydbtest.users (\n" +
+            "  id INT NOT NULL AUTO_INCREMENT,\n" +
+            "  name VARCHAR(45) NOT NULL,\n" +
+            "  lastName VARCHAR(45) NOT NULL,\n" +
+            "  age INT(3) NOT NULL,\n" +
+            "  PRIMARY KEY (id))\n" +
+            "ENGINE = InnoDB\n" +
+            "DEFAULT CHARACTER SET = utf8;";
+    private static final String DROP = "DROP TABLE IF EXISTS mydbtest.users";
+    private static final String SAVE = "INSERT INTO mydbtest.users(name, lastName, age) VALUES(?, ?, ?)";
+    private static final String GET_ALL = "SELECT * FROM mydbtest.users";
+    private static final String DELETE = "DELETE FROM mydbtest.users WHERE id = ?";
+
+    private static final String CLEAR = "TRUNCATE table mydbtest.users";
+
+    private static final SessionFactory sessionFactory =  Util.getSessionFactory();
+
     public UserDaoHibernateImpl() {
 
     }
@@ -11,31 +36,100 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
-
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+            session.createNativeQuery(CREATE,User.class).executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.out.println("ERROR!");
+        }
     }
 
     @Override
     public void dropUsersTable() {
-
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+            session.createNativeQuery(DROP,User.class).executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.out.println("ERROR!");
+        }
     }
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+            NativeQuery<User> userNativeQuery = session.createNativeQuery(SAVE, User.class);
+            userNativeQuery.setParameter(1,name);
+            userNativeQuery.setParameter(2,lastName);
+            userNativeQuery.setParameter(3,age);
+            userNativeQuery.executeUpdate();
+            System.out.println("User с именем — " + name + " добавлен в базу данных");
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.out.println("ERROR!");
+        }
     }
 
     @Override
     public void removeUserById(long id) {
-
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+            NativeQuery<User> userNativeQuery = session.createNativeQuery(DELETE, User.class);
+            userNativeQuery.setParameter(1,id).executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.out.println("ERROR!");
+        }
     }
 
     @Override
     public List<User> getAllUsers() {
-        return null;
+        List<User> list = new ArrayList<>();
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+            list = session.createNativeQuery(GET_ALL, User.class).list();
+            //list = session.createQuery("from User", User.class).list();
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.out.println("ERROR!");
+        }
+        return list;
     }
 
     @Override
     public void cleanUsersTable() {
-
+        Transaction transaction = null;
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+            session.createNativeQuery(CLEAR,User.class).executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            System.out.println("ERROR!");
+        }
     }
 }
