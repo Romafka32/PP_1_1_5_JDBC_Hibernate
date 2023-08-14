@@ -21,9 +21,9 @@ public class UserDaoHibernateImpl implements UserDao {
             "ENGINE = InnoDB\n" +
             "DEFAULT CHARACTER SET = utf8;";
     private static final String DROP = "DROP TABLE IF EXISTS mydbtest.users";
-    private static final String SAVE = "INSERT INTO mydbtest.users(name, lastName, age) VALUES(?, ?, ?)";
-    private static final String GET_ALL = "SELECT * FROM mydbtest.users";
-    private static final String DELETE = "DELETE FROM mydbtest.users WHERE id = ?";
+    private static final String SAVE = "INSERT INTO users(name, lastName, age) VALUES(?, ?, ?)";
+    private static final String GET_ALL = "SELECT * FROM users";
+    private static final String DELETE = "DELETE FROM users WHERE id = ?";
 
     private static final String CLEAR = "TRUNCATE table mydbtest.users";
 
@@ -102,13 +102,13 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public List<User> getAllUsers() {
-        List<User> list = new ArrayList<>();
+        List<User> list = null;
         Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
             list = session.createNativeQuery(GET_ALL, User.class).list();
-            //list = session.createQuery("from User", User.class).list();
             transaction.commit();
+            list.stream().forEach(System.out::println);
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
